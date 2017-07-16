@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>DIT grangeMobile</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!--Link to Themeroller css files for jQuery Mobile styling -->
+        <link href="themes/ditmobile.min.css" rel="stylesheet" type="text/css"/>
+        <link href="themes/jquery.mobile.icons.min.css" rel="stylesheet" type="text/css"/>
+        
+        <!-- Link the jQuery API css, a general stylesheet, and plugin css files.-->
+        <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/fotorama.css" rel="stylesheet" type="text/css"/>
+        <link href="css/jquery.sharebox.min.css" rel="stylesheet" type="text/css"/>
+        
+        <!-- Link to jQuery and jQuery Mobile -->
+        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        
+        <!-- Link to Fotorama and Sharebox plugin files -->
+        <script src="js/fotorama.js" type="text/javascript"></script>
+        <script src="js/jquery.sharebox.min.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+
+        <!-- Start of Home Page -->
+        <div data-role="page" data-theme="c" id="homepage">
+
+            <!--Header. Made role as banner.-->
+            <div data-role="header" role="banner" style="text-align:center;">
+                <h1>DIT Homepage</h1>
+                <img src="assets/ditlogo.png" alt=""/>
+            </div>
+
+            <!-- A listview of all the pages in the app with linking.-->
+            <div data-role="content" class="ui-content" data-theme="c">
+                <ul data-role="listview">
+                    <li><a href="#pageone">My Modules</a></li>
+                    <li><a href="#pagetwo">My Lecturers</a></li>
+                    <li><a href="#pagethree">My Classmates</a></li>
+                    <li><a href="#pagefour">School News</a></li>
+                    <li><a href="#pagefive">Student Experience</a></li>
+                    <li><a href="#pagesix">Gallery</a></li>
+                    <li><a href="#pageseven">Location</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page one. My Modules. I've created a table and used jQuery to populate it with JSON information-->
+        <div data-role="page" data-theme="c" id="pageone">
+            <div data-role="header" data-theme="c" data-add-back-btn="true">
+                <h1>My Modules</h1>
+            </div>
+
+            <!-- Putting a table in the div first. It has a column toggle
+            so that user can choose what columns they want to see. Every
+            table head also has a data-priority to make the table more response
+            so that less important columns disappear when screen becomes smaller.-->
+            <div role="main" data-theme="c" class="ui-content" >
+                <table data-role="table" data-mode="columntoggle" class="ui-responsive" id="modulestable">
+                    <thead>
+                        <tr>
+                            <th>Module Name</th>
+                            <th data-priority="1">Module Number</th>
+                            <th data-priotity="2">Credits</th>
+                            <th data-priority="6">Website</th>
+                            <th data-priority="5">Due Date</th>
+                            <th data-priority="4">Location</th>
+                            <th data-priority="3">Room</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <script>
+                //Getting the Modules php info and styling it by populating a table in HTML.
+                //I styled it by making it a basic table. The columntoggle styling is in the html.
+                $(document).ready(function () {
+                    $.getJSON('http://localhost:8888/php/json-data-modules.php', function (data) {
+                        $.each(data.modules, function (index, module) {
+                            $("#modulestable").append(
+                                    "<tr>"
+                                    + "<td>" + module.moduleName + "</td>"
+                                    + "<td>" + module.moduleNo + "</td>"
+                                    + "<td>" + module.credits + "</td>"
+                                    + "<td>" + module.website + "</td>"
+                                    + "<td>" + module.dueDate + "</td>"
+                                    + "<td>" + module.location + "</td>"
+                                    + "<td>" + module.room + "</td>"
+                                    + "</tr>");
+                        }); //End of loop
+                    }); //End of JSON Call
+                        }); //End of $document.ready function
+
+            </script>
+
+        </div> <!-- End of Page One -->
+
+
+        <!-- Start of Page Two. My Lecturers Page. -->
+        <div data-role="page" data-theme="c" id="pagetwo">
+            <div data-role="header" data-theme="c" data-add-back-btn="true">
+                <h1>My Lecturers</h1>
+            </div>
+
+            <!-- Created a listview that the JSON will populate. -->
+            <div data-role="main" data-theme="c" class="ui-content">
+                <h3>Tap to send an email to your lecturer.</h3>
+                <ul data-role="listview" id="lecturerslist">
+                </ul>
+            </div>
+
+            <!--This is a Contact Email popup. User can click each lecturer
+            and email them using this popup form.-->
+            <div data-role="main" data-theme="c" class="ui-content">
+                <div data-role="popup" id="emaillecturer">
+                    <div data-role="header">
+                        <h1>Contact</h1>
+                    </div>
+
+                    <div data-role="main" data-theme="c" class="ui-content">
+                        <h2>Contact Lecturer</h2>
+                        <form>
+
+                            <!-- Contact form for user to input their name and message.-->
+                            <label for="fullname">Full Name:</label>
+                            <input type="text" placeholder="Full Name here..." data-clear-btn="true" id="fullname">
+                            <label for="message">Message:</label>
+                            <textarea id="message" placeholder="Enter Message here..."></textarea>
+
+                            <!-- Select Menu for user to choose which department they are in.-->
+                            <fieldset class="ui-field-contain">
+                                <label for="department">Department</label>
+                                <select>
+
+                                    <!-- Option groups so that user can better navigate through the options. -->
+                                    <optgroup label="Sciences">
+                                        <option>Computer Science</option>
+                                        <option>Physics</option>
+                                        <option>Game Design</option>
+                                        <option>Engineering</option>
+                                    </optgroup>
+                                    <optgroup label="Humanities">
+                                        <option>Philosophy</option>
+                                        <option>English</option>
+                                    </optgroup>
+                                </select>
+                            </fieldset>
+                            <a href="#" class="ui-btn" data-rel="back">Submit</a>
+                            <a href="#" class="ui-btn" data-rel="back">Cancel</a>
+                        </form>
+                    </div>
+
+                    <div data-role="footer">
+                        <h1>Contact</h1>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                //Script to call lecturers and populate it into the listview.
+                //I wanted each lecturer call to be a link that transitioned to the popup.
+                //That's why most of the HTML styling is appended within the script.
+                $(document).ready(function () {
+                    $.getJSON('http://localhost:8888/php/json-data-lecturers.php', function (data) {
+                        $.each(data.lecturers, function (index, lecturer) {
+                            $("#lecturerslist").append(
+                                    "<li>" + '<a href="#emaillecturer" data-rel="popup" data-position-to="window" data-transition="fade">'
+                                    + "<h2>" + lecturer.firstName + " " + lecturer.lastName + "</h2>"
+                                    + "<p>" + "Staff Number: " + lecturer.staffNumber + "</p>"
+                                    + "<p>" + "Modules Taught: " + lecturer.moduleNo1 + ", " + lecturer.moduleNo2 + "</p>"
+                                    + "<p>" + "Email: " + lecturer.email + "</p>"
+                                    + "</a>" + "</li>");
+                        }); //End of loop
+                    }); //End of JSON Call
+                        }); //End of $document.ready function
+            </script>
+        </div> <!-- End of Page Two -->
+
+
+        <!-- Start of Page Three, My Classmates Page -->
+        <div data-role="page" data-theme="c" id="pagethree">
+
+            <div data-role="header" data-add-back-btn="true">
+                <h1>My Classmates</h1>
+            </div>
+
+            <!-- I created a search bar so that user can search for their classmates.-->
+            <form class="ui-filterable">
+                <input id="filter" data-type="search">
+            </form>
+
+            <!-- This is the HTML collapsibleset that the JSON populates classmate info into.-->
+            <div data-role="main" class="ui-content">
+                <div data-role="collapsibleset" id="classmates">
+                </div>
+            </div>
+
+            <script>
+                //Getting the Students php info and styling it by populating it into collapsible sets in HTML.
+                //I chose collapisble sets because I think it would act sort of like an address book, since there are so many students.
+                //I added a search function as well, and most HTML styling is appended within the script.
+                //I also added an "email" section.
+                $(document).ready(function () {
+                    $.getJSON('http://localhost:8888/php/json-data-students.php', function (data) {
+                        $.each(data.students, function (index, student) {
+                            $("#classmates").append(
+                                    '<div data-role="collapsible" data-inset="false" data-filter="true" data-input="#filter">'
+                                    + "<h3>" + student.firstName + " " + student.lastName + "</h3>"
+                                    + "<p>" + "Modules Enrolled In: " + student.moduleNo1 + ", " + student.moduleNo2 + "</p>"
+                                    + "<br>" + "<p>" + "Course Enrolled In: " + student.courseID + "</p>"
+                                    + "<br>" + "<p>" + "Email: " + student.firstName + student.lastName + "@mydit.ie" + "</p>"
+                                    + "</div");
+                        }); //End of loop
+                    }); //End of JSON Call
+                        }); //End of $document.ready function
+
+            </script>
+        </div> <!-- End of Page Three -->
+
+
+        <!-- Start of Page Four, School News -->
+        <div data-role="page" data-theme="c" id="pagefour">
+            <div data-role="header" data-add-back-btn="true">
+                <h1>School News</h1>
+            </div>
+
+            <!-- This is a canvas box that accurately shows today's date -->
+            <div data-role="main" class="ui-content">
+                <canvas id="canvasdate" width="400" height="150" style="border:1px;">
+                    Your browser does not support the HTML5 canvas tag.</canvas>
+
+                <!-- This is a list that the Twitter API populates info into -->
+                <div class="box" style="text-align:center">                    
+                    <h1 style="color:darkblue;">DIT Twitter Feed</h1>
+                    <ul id="dittwitterfeed" style="color:darkblue;">
+                    </ul>
+                </div>
+
+                <!--These are from Sharebox Plugin. These are for users to share
+                on social media how amazing dit.ie is.-->
+                <div style="text-align:center;"
+                     class="sharebox"
+                     data-url="http://dit.ie/"
+                     data-title="DIT is Amazing!"
+                     data-services="facebook twitter google+">
+                </div>
+            </div>
+
+            <script>
+                //Script to call Twitter tweets with an AJAX requests.
+                //Tweets are from the official DIT twitter account.
+                var graphURL = "http://localhost:8888/php_twitter/timeline_response.php";
+                $(document).ready(function () {
+                    $.getJSON(graphURL, function (data) {
+                        $.each(data.tweets, function (i, tweet) {
+                            //HTML styling is applied as each tweet is iterated through.
+                            $("#dittwitterfeed").append("<li><strong>" + tweet.created_at + "</strong>: " + tweet.text + "</li><hr>");
+                        });
+                    });
+                });
+
+                //Script so canvas always shows the current date
+                //Define the getContext method so that we can return an object that draws on the canvas
+                var canvas = document.getElementById("canvasdate");
+                var ctx = canvas.getContext("2d");
+
+                //Define the key as today so we can grab values from Date
+                //Style the canvas with something legible and simple
+                today = new Date();
+                ctx.font = "25px Verdana";
+                ctx.fillStyle = "white";
+                ctx.textAlign = "center";
+                //Populating the canvas with today's accurate date
+                ctx.fillText(("Today's Date Is " + today.getDate()
+                        + "/" + today.getMonth() + "/" + today.getFullYear()), canvas.width / 2, canvas.height / 2);
+            </script>
+        </div> <!-- End of Page Four -->
+
+        
+        <!-- Start of Page Five, Student Experience -->
+        <div data-role="page" data-theme="c" id="pagefive">
+            <div data-role="header" data-add-back-btn="true">
+                <h1>Student Experience</h1>
+            </div>
+
+            <div data-role="main" class="ui-content" style="text-align:center">
+                <h3>Check out some video and music clips about DIT!</h3>
+            </div>
+
+            <div data-role="main" class="ui-content" style="text-align:center">
+                <h4>School of Media Degrees</h4>
+                
+                <!--A video about DIT School of Media. I added a poster. I didn't want to add backup videos because the file sizes might add up. -->
+                <video id="schoolofmediavid" preload="auto" width="320" height="240" controls poster="assets/schoolofmediaposter.png">
+                    <source src="assets/schoolofmedia.mp4" type="video/mp4">
+                    Your browser does not support the <code>video</code> tag.
+                </video>
+
+                <!--An audio clip playing music made by DIT alumni. -->
+                <h4>Alumni Music: "I Don't Like Mondays" by The Boomtown Rats</h4>
+                <audio id="boomtownaudio" controls>
+                    <source src="assets/boomtown.mp3" type="audio/mpeg">
+                    Your browser does not support the <code>audio</code> tag.
+                </audio>
+
+                <!-- An audio clip playing DIT trad music. -->
+                <h4>DIT Traditional Music Ensemble</h4>
+                <audio id="tradaudio" controls>
+                    <source src="assets/tradmusic.mp3" type="audio/mpeg">
+                    Your browser does not support the <code>audio</code> tag.
+                </audio>
+                <br>
+
+                <!--An iframe tag that shows an inline frame of the Study at DIT website page.-->
+                <h4>Check out some of our programs!</h4>
+                <iframe src="http://dit.ie/studyatdit/" width="500" height="300"></iframe>
+
+            </div>
+        </div> <!-- End of Page Five -->
+
+        
+        <!-- Start of Page Six, Gallery -->
+        <div data-role="page" data-theme="c" id="pagesix">
+            <div data-role="header" data-add-back-btn="true">
+                <h1>Gallery</h1>
+            </div>
+
+            <div data-role="main" class="ui-content" style="text-align:center">
+
+                <!--A photostream of DIT photos from the Flickr Public Feed. The fotorama class is a simple image slider plugin.-->
+                <div class="ui-content" style="text-align:center">
+                    <h3>Photostream of DIT's Newest Campus</h3>
+                    <div class="fotorama" data-width="100%" data-ratio="800/600" data-maxwidth="1000" id="publicfeed"></div>
+                </div>
+
+                <!-- A photostream of photos from my personal Flickr Private Feed. -->
+                <div class="ui-content" style="text-align:center">
+                    <h3>A Look into an International DIT Student's Photostream</h3>
+                    <div class="fotorama" data-width="100%" data-ratio="800/600" data-maxwidth="1000" id="privatefeed" ></div>
+                </div>
+
+                <script>
+                    //Script to call from Flickr Public Feed
+                    //I tried a million combinations of tags but I think only 'Dublin Institute of Technology' tag has relevant photos of DIT
+                    $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
+                            {
+                                tags: "Dublin Institute of Technology",
+                                tagmode: "any",
+                                format: "json"
+                            },
+                            function (data) {
+                                $.each(data.items, function (i, item) {
+                                    $("<img/>").attr("src", item.media.m).appendTo("#publicfeed");
+                                    if (i === 5)
+                                        return false;
+                                });
+                            });
+
+                    //Script to call from my private Flickr feed. I put in some photos I had of Dublin.
+                    var apiCall = "https://api.flickr.com/services/rest/?format=json&method=flickr.photosets.getPhotos&jsoncallback=?";
+                    var src;
+                    //My personal keys
+                    $.getJSON(apiCall,
+                            {
+                                photoset_id: "72157680402826053",
+                                per_page: "5",
+                                page: "1",
+                                api_key: "73a334007899dd93ab0469fced5ea865",
+                                format: "json"
+                            },
+                            function (data) {
+                                $.each(data.photoset.photo, function (i, item) {
+                                    src = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_m.jpg";
+                                    $("<img/>").attr("src", src).appendTo("#privatefeed").wrap("<a href=" + src + " data-gallery></a>");
+                                });
+                            });
+                </script>
+            </div>
+        </div> <!-- End of Page Six -->
+
+        
+        <!-- Start of Page Seven, Location -->
+        <div data-role="page" data-theme="c" id="pageseven">
+            <div data-role="header" data-add-back-btn="true">
+                <h1>Location</h1>
+            </div>
+
+            <!--A Google map with a bouncing marker that shows the user where DIT Aungier Street is.-->
+            <div data-role="main" class="ui-content" style="text-align:center;">
+                <h1>Come visit the DIT Aungier Street campus!</h1>
+                <div id="map" style="width:100%;height:500px"></div>
+            </div>
+
+            <!-- A twitter feed I've embedded. While I have the JSON Twitter feed, the embedded widget is definitely well-styled. -->
+            <div style="text-align:center;">
+                <a class="twitter-timeline" data-width="500" data-height="300" href="https://twitter.com/ditofficial">Tweets by ditofficial</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+
+            <script>
+                    //This is to load the map into page seven.
+                    //Without this, I had to keep refreshing the page in order to see the map.
+                    $(document).on("pageinit", "#pageseven", function () {
+                        myMap();
+                    });
+                    //Define Aungier Street coordinates.
+                    var aungierstreet = {lat: 53.338566, lng: -6.266575};
+                    //Google map function that centers and zooms it into DIT Aungier street.
+                    function myMap() {
+
+                        var myCenter = new google.maps.LatLng(53.3453237, -6.2794071);
+                        var mapCanvas = document.getElementById("map");
+                        var mapOptions = {center: myCenter, zoom: 15};
+                        var map = new google.maps.Map(mapCanvas, mapOptions);
+                        //A marker to show User exactly where to go (it bounces, too!)
+                        var marker = new google.maps.Marker({
+                            position: aungierstreet,
+                            title: 'Aungier Street',
+                            animation: google.maps.Animation.BOUNCE
+                        });
+                        marker.setMap(map);
+
+                        //This resizes the map so that it kickstarts the map into loading properly. 
+                        //This was also essential to allowing the map to load properly
+                        google.maps.event.addListenerOnce(map, 'idle', function () {
+                            google.maps.event.trigger(map, 'resize');
+                            map.setCenter(location);
+                        });
+                    }
+            </script>
+
+            <!-- For some reason, the map would not work for me unless the Google API key was after the script.-->
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHpBlLk9So60aCfBJBZyUV-7GYWEYNvyA&callback=myMap"></script>
+
+        </div> <!-- End of Page Seven -->
+
+    </body>
+</html>
